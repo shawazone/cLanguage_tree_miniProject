@@ -1,0 +1,314 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h> 
+
+/* struct info contains the weight and the type of the birds */
+
+typedef struct info {   
+
+float weight;  
+char type[20];
+}info;
+
+
+/*struct birds is for the nodes of the tree*/
+
+
+typedef struct birds {   
+info data; 
+struct birds *left; 
+struct birds *right;
+}node;
+
+/* struct tree is for the tree */
+
+typedef struct tree {   
+
+node * root ;
+
+}tree;
+
+/*function that creates epmty tree  */
+
+tree  createmptytree ()
+{    tree * a = (tree *)malloc(sizeof(node));
+a->root = NULL;  
+return *a;}
+
+/*function that creats a leaf with a variable t of type info (fot the bird info)and declares the right and left of the node as Null*/
+
+node * creatleaf(info t)  {
+
+/*creationofaleaf*/
+
+
+node *a = (node *) malloc (sizeof (node));
+a->data = t;
+a->right = NULL;
+a->left = NULL;
+return a;
+}				/* function creatnode creates nodestakes 3 varaiblest for bird infol and r for the right and left of the node */
+
+node *
+creatnode (info t, node * l, node * r)
+{
+  node *a = (node *) malloc (sizeof (node));
+  a->data = t;
+  a->right = l;
+  a->left = r;
+  return a;
+}				/* function create tree creats tree 
+
+				   takes 3 variablest for the bird info a1 and a2 of type treea1.root refers to the node and the functions calls creat node and returns pointer of type tree */
+
+creattree (info t, tree a1, tree a2)
+{
+  tree *e = (tree *) malloc (sizeof (tree));
+  e->root = creatnode (t, a1.root, a2.root);
+  return *e;
+}				/* compare is used to compare the weight of the birds takes 2 variables of type info and we access the weight in the info by  (variable.weight)it returns an intger which will be used later for the insert function */
+
+int
+compare (info a1, info a2)
+{
+  if (a1.weight < a2.weight)
+    return -1;
+  if (a1.weight == a2.weight)
+    return 0;
+  else
+    return 1;
+}
+
+/* insert function inserts the nodes according to weight if the bird in the node it uses the function compare */ void
+insert (node * n, info t)
+{
+  if (compare (t, n->data) == -1)
+    {
+      if (n->left == NULL)
+	n->left = creatleaf (t);
+      else
+	insert (n->left, t);
+    }
+  else
+    {
+      if (n->right == NULL)
+	n->right = creatleaf (t);
+      else
+	insert (n->right, t);
+    }
+}				/* insert main inserts the the main treecreats a leaf if the root is null if not is insets nodes using the insert function */
+
+void
+insertmain (tree * a, info v)
+{
+  if (a->root == NULL)
+    a->root = creatleaf (v);
+  else
+    insert (a->root, v);
+
+
+}				/*  count node function returns the number of nodes */
+
+int
+countnode (node * n)
+{
+  if (n->left == NULL)
+    if (n->right == NULL)
+      return 1;
+    else
+      return 1 + countnode (n->right);
+  else if (n->right == NULL)
+    return 1 + countnode (n->left);
+  return 1 + countnode (n->right) + countnode (n->left);
+}				/* count node tree function  returns 0 if the root is Nullelse it calls count node which returns the number of nodes */
+
+int
+countnodeTree (tree a)
+{
+  if (a.root == NULL)
+    return 0;
+  else
+    return countnode (a.root);
+}				/* display info displays  the info of the birds the weight and the type */
+
+void
+displayinfo (info v)
+{
+  printf ("--the bird [%s]  weights [%f]--,\t", v.type, v.weight);
+}				/*  display node traverse between nodes and displays the  info of the node by using display info    it displays the nodes  according weight (the bottom left is the lowest wieght)  */
+
+void
+displaynode (node * a)
+{
+  if (a->left != NULL)
+    displaynode (a->left);
+  displayinfo (a->data);
+  if (a->right != NULL)
+    displaynode (a->right);
+}				/*  display tree  displays the nodes if the root is not is not Null  */
+
+void
+displaytree (tree a)
+{
+  if (a.root != NULL)
+    displaynode (a.root);
+}
+
+  /*  read info  function asks the user to enter the weight and the type of the birds and assigns them to a pointer of type and size of struct info   */
+info
+ReadInfo ()
+{
+  info *e = (info *) malloc (sizeof (info));
+  printf ("give the weight of the bird:");
+  scanf ("%f", &e->weight);
+  printf ("give the type of the bird :");
+  scanf ("%s", e->type);
+  return *e;
+}				/*  sum function sums the weights of all birds   it traverse all the nodes and returns the sum of the weights  */
+
+float
+sum (node * n)
+{
+  if (n->left == NULL)
+    if (n->right == NULL)
+      return n->data.weight;
+    else
+      return n->data.weight + sum (n->right);
+  else if (n->right == NULL)
+    return n->data.weight + sum (n->left);
+  return n->data.weight + sum (n->right) + sum (n->left);
+}
+
+   /*  sum tree returns the sum of the weights in the tree and reurns 0 if the root is NUll  . thisfunction will be used to find the average weight  */ float
+sumtree (tree a)
+{
+  if (a.root == NULL)
+    return 0;
+  else
+    return sum (a.root);
+}				/*  diplay sum displays the sum   */
+
+void
+displaysum (tree a)
+{
+  printf ("the sum = %f", sumtree (a));
+} /*  avg node divides the the sum of the weights by the number of birds   which returns the average weight of the birds  */ float
+
+avgnode (node * n)
+{
+  return sum (n) / countnode (n);
+}				/*  avg returns the avrage weight in the tree by using the avgnode function
+
+				   unless the root is NUll (then it returns 0)  */
+float
+avg (tree a)
+{
+  if (a.root == NULL)
+    return 0;
+  return avgnode (a.root);
+}				/*  display avg  displays the average  on the screen  */
+
+void
+displayavg (tree a)
+{
+  printf (" the avg is =%f", avg (a));
+} /*above finds the number of birds having weight above the average */ float
+
+above (node * n, int avgnode)
+{
+  int nbofbirds = 0;
+  if (n != NULL)
+    {
+      if (n->right != NULL)
+	nbofbirds += above (n->right, avgnode);
+      if (n->data.weight > avgnode)
+
+	nbofbirds++;
+      if (n->right != NULL)
+	nbofbirds += above (n->left, avgnode);
+    }
+  return nbofbirds;
+}				/*above avg tree function retuns 0 if the root is NUllelse returns the the number of birds having weight above average int the tree */
+
+int
+aboveavgtree (tree a)
+{
+  if (a.root == NULL)
+    return 0;
+  return above (a.root, avgnode);
+}				/*display above avg displays the number of birds with weight above averageit calls above avg functions and prints its value */
+
+void
+displaboveavg (tree a)
+{
+  printf ("the nb of values above avg =%d", aboveavgtree (a));
+}
+
+
+    /*creats file and puts the info in it */ void
+creatfile (node * a, FILE * z)
+{
+  FILE *p;
+  p = fopen ("file.txt", "a");
+  if (a->left != NULL)
+    creatfile (a->left, p);
+  if (a->left != NULL)
+    creatfile (a->right, p);
+  fprintf (p, "%f,%s /n", a->data.weight, a->data.type);
+  fclose (p);
+}				/*displays the content of the file */
+
+void
+displaycontent ()
+{
+  FILE *pf;
+  char c;
+  pf = fopen ("file.txt", "r");
+  if (pf == NULL)
+    {
+
+      printf ("error");
+      exit (0);
+    }
+  c = fgetc (pf);
+  while (c != EOF)
+    {
+      printf ("%c", c);
+      c = fgetc (pf);
+    }
+  fclose (pf);
+}
+
+void
+main ()
+{
+  tree a = createmptytree ();
+  printf ("\n");
+  int i;
+  FILE *p;
+  int number;
+  printf ("enter the number of birds you want to add");
+  scanf ("%d", &number);
+  printf ("-----Insert the elements :\n");
+  for (i = 0; i < number; i++)
+    {
+      insertmain (&a, ReadInfo ());
+
+
+      printf ("Tree is now:");
+      displaytree (a);
+      printf ("\n");
+    }				// displaying the tree elements  
+    displayavg(a);     
+    printf("\n"); 
+    //displaying the average weight 
+    displaboveavg(a); 
+    // displaying the number of birds with weight above average    
+    printf("\n");    
+    printf("creating file ");   
+    creatfile(a.root,p); 
+    //creating file   
+    printf("displaying the content of file"); 
+    // displaying the content of the file   
+    displaycontent();
+    }
