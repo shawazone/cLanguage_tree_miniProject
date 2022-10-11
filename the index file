@@ -11,6 +11,7 @@ char type[20];
 }info;
 
 
+
 /*struct birds is for the nodes of the tree*/
 
 
